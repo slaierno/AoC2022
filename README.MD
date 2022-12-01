@@ -5,7 +5,7 @@
 * GCC 12 (older GCC compatible with C++20 should work with little adjustments on `Makefile`)
 * Make
 
-## Usage
+## Build
 
 For each day there is a folder `Day<number of the day>`
 
@@ -15,6 +15,17 @@ In each folder there is a `Makefile` with the following targets:
 * `p1_fast`, `p2_fast`: build part one and part two with optimizations
 * `all`: builds `p1` and `p2` together
 * `fast`: builds `p1_fast` and `p2_fast` together
+
+## Run
+
+`./part[1,2].out input{.test}`
+
+Examples:
+
+* `./part1.out input.test`  
+Runs part one with test input
+* `./part2.out input`  
+Runs part two with real input
 
 ## Note
 
