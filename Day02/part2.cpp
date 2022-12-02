@@ -6,9 +6,6 @@
 
 class RPS {
     int m_rps;
-    constexpr static int ROCK = 0;
-    constexpr static int PAPER = 1;
-    constexpr static int SCISSOR = 2;
 public:
     constexpr RPS(char c) : m_rps(c - (c < 'X' ? 'A' : 'X')) {}
     constexpr RPS(int rps) : m_rps(rps) {}
