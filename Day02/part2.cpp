@@ -20,9 +20,7 @@ public:
     constexpr auto get_winlose(char c) const { return get_winlose(c - 'X' - 1); }
 };
 
-using Round = std::pair<RPS, RPS>;
-
-uint64_t get_round_score(const Round& round) {
+uint64_t get_round_score(const std::pair<RPS, RPS>& round) {
     return 3*((round.second <=> round.first) + 1) + round.second.score();
 }
 
