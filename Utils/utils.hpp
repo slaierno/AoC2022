@@ -40,29 +40,27 @@ namespace AoC{
         return AoC::split(to_split, std::string(1, delimiter), l);
     }
 
-    template<typename L = decltype(idem_return)>
-    auto get_input(const std::string& filename, const std::initializer_list<std::string>& delimiters,
-               L l = idem_return) {
+    auto get_input(const std::string& filename) {
         if(std::ifstream input_file(filename); input_file.is_open()) {
             std::stringstream buffer;
             buffer << input_file.rdbuf();
-            return AoC::split(buffer.str(), delimiters, l);
+            return buffer.str();
         } else throw "Invalid input\n";
+    }
+
+    auto get_input(const std::string& filename, const std::initializer_list<std::string>& delimiters,
+               auto l = idem_return) {
+        return AoC::split(AoC::get_input(filename), delimiters, l);
     };
 
-    template<typename L = decltype(idem_return)>
-    auto get_input(const std::string& filename, const std::string& delimiter,
-               L l = idem_return) {
+    auto get_input(const std::string& filename, const std::string& delimiter, auto l = idem_return) {
         return AoC::get_input(filename, {delimiter}, l);
     }
 
-    template<typename L = decltype(idem_return)>
-    auto get_input(const std::string& filename, const char delimiter,
-               L l = idem_return) {
+    auto get_input(const std::string& filename, const char delimiter, auto l = idem_return) {
         return AoC::get_input(filename, std::string(1, delimiter), l);
     };
 
-    
     template <template <typename> typename T = std::vector>
     constexpr auto for_each_ret(const auto& b, const auto& e, const auto& l) {
         T<decltype(l(*b))> ret;
