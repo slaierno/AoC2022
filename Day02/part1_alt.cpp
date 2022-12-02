@@ -10,7 +10,7 @@ constexpr unsigned str_to_num(const std::string_view str) {
 
 constexpr auto result_map = [](){
     std::array<unsigned, 16> result_score{};
-    const std::array<std::string, 9> possible_rounds = {
+    const std::array<std::string_view, 9> possible_rounds = {
         "A X", "A Y", "A Z",
         "B X", "B Y", "B Z",
         "C X", "C Y", "C Z",
