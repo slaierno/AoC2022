@@ -1,45 +1,40 @@
-// #include <iostream>
-// #include <fstream>
-// #include <cassert>
-// #include <range/v3/all.hpp>
-// #include "utils.hpp"
+#include <cassert>
+#include <fstream>
+#include <iostream>
+#include <range/v3/all.hpp>
 
-// class RPS {
-//     int m_rps;
-// public:
-//     constexpr RPS(char c) : m_rps(c - (c < 'X' ? 'A' : 'X')) {}
-//     constexpr RPS(int rps) : m_rps(rps) {}
+#include "utils.hpp"
 
-//     constexpr auto operator<=>(const RPS& rhs) const {
-//         if (m_rps == rhs.m_rps) return 0;
-//         else if ((m_rps + 1) % 3 == rhs.m_rps) return -1;
-//         else return 1;
-//     }
-//     constexpr auto score() const { return m_rps + 1; }
-//     constexpr auto get_winlose(int winlose) const { return RPS((m_rps + winlose + 3) % 3); }
-//     constexpr auto get_winlose(char c) const { return get_winlose(c - 'X' - 1); }
-// };
+auto get_element_score(auto c) {
+    switch (c) {
+        case 'a' ... 'z':
+            return c - 'a' + 1;
+        case 'A' ... 'Z':
+            return c - 'A' + 27;
+        default:
+            throw;
+    }
+}
 
-// uint64_t get_round_score(const std::pair<RPS, RPS>& round) {
-//     return 3*((round.second <=> round.first) + 1) + round.second.score();
-// }
+// 2415
+int main(int argc, char* argv[]) {
+    using namespace ranges;
 
-// //14204
-// int main(int argc, char *argv[])
-// {
-//     using namespace ranges;
+    // quick and dirty
+    assert(argc == 2);
 
-//     //quick and dirty
-//     assert(argc == 2);
+    const auto input = AoC::get_input(argv[1], "\n");
+    const auto priority_sum =
+        accumulate(input | views::chunk(3) | views::transform([](auto v3) {
+                       auto el = find_if(v3[0], [&v3](auto c) {
+                           return v3[1].contains(c) && v3[2].contains(c);
+                       });
+                       if (el == v3[0].end()) throw;
+                       return get_element_score(*el);
+                   }),
+                   0ULL);
 
-//     const auto score = accumulate(
-//         AoC::get_input(argv[1], "\n", [](auto v){
-//             const RPS opponent {v[0]};
-//             return get_round_score({opponent, opponent.get_winlose(v[2])});
-//         }),
-//         0ULL);
+    std::cout << priority_sum << std::endl;
 
-//     std::cout << score << std::endl;
-
-//     return 0;
-// }
+    return 0;
+}

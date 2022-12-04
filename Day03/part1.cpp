@@ -1,40 +1,41 @@
-// #include <iostream>
-// #include <fstream>
-// #include <cassert>
-// #include <range/v3/all.hpp>
-// #include "utils.hpp"
+#include <cassert>
+#include <fstream>
+#include <iostream>
+#include <range/v3/all.hpp>
 
-// class RPS {
-//     int m_rps;
-// public:
-//     constexpr RPS(char c) : m_rps(c - (c < 'X' ? 'A' : 'X')) {}
-//     constexpr auto operator<=>(const RPS& rhs) const {
-//         if (m_rps == rhs.m_rps) return 0;
-//         else if ((m_rps + 1) % 3 == rhs.m_rps) return -1;
-//         else return 1;
-//     }
-//     constexpr auto score() const { return m_rps + 1; }
-// };
+#include "utils.hpp"
 
-// uint64_t get_round_score(const std::pair<RPS, RPS>& round) {
-//     return 3*((round.second <=> round.first) + 1) + round.second.score();
-// }
+auto get_element_score(auto c) {
+    switch (c) {
+        case 'a' ... 'z':
+            return c - 'a' + 1;
+        case 'A' ... 'Z':
+            return c - 'A' + 27;
+        default:
+            throw;
+    }
+}
 
-// //13526
-// int main(int argc, char *argv[])
-// {
-//     using namespace ranges;
+// 7766
+int main(int argc, char* argv[]) {
+    using namespace ranges;
 
-//     //quick and dirty
-//     assert(argc == 2);
+    // quick and dirty
+    assert(argc == 2);
 
-//     auto score = accumulate( 
-//         AoC::get_input(argv[1], "\n", [](auto v){
-//             return get_round_score({v[0], v[2]});
-//         }),
-//         0ULL);
+    auto priority_sum = accumulate(
+        AoC::get_input(argv[1], "\n",
+                       [](const std::string_view v) {
+                           const std::string_view comp1(
+                               v.begin(), v.begin() + (v.size() / 2));
+                           const std::string_view comp2(
+                               v.begin() + (v.size() / 2), v.end());
+                           const auto duplicate = v[comp1.find_first_of(comp2)];
+                           return get_element_score(duplicate);
+                       }),
+        0ULL);
 
-//     std::cout << score << std::endl;
+    std::cout << priority_sum << std::endl;
 
-//     return 0;
-// }
+    return 0;
+}
