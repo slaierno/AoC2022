@@ -13,7 +13,6 @@ int main(int argc, char* argv[]) {
     // quick and dirty
     assert(argc == 2);
 
-    std::array<std::stack<char>, 9> hanoi{};
     const auto input = AoC::get_input(argv[1], "\n\n");
     const auto stack_str = AoC::split(input[0], "\n");
     const auto instr_list =
@@ -23,17 +22,19 @@ int main(int argc, char* argv[]) {
                               std::stoull(mft[5]) - 1};
         });
 
+    const size_t num_of_stacks = (stack_str[0].size() + 1) / 4;
+    std::vector<std::stack<char>> hanoi(num_of_stacks);
     for (const auto& level : stack_str | views::drop_last(1) | views::reverse) {
-        for (unsigned i = 0; i < 10; i++) {
+        for (unsigned i = 0; i < num_of_stacks; i++) {
             if (const auto crate = level[4 * (i + 1) - 3]; crate != ' ') {
                 hanoi[i].push(crate);
             }
         }
     }
 
-    for (const auto& [move, from, to] : instr_list) {
+    for (auto [move, from, to] : instr_list) {
         std::stack<char> temp_stack{};
-        for (unsigned i = 0; i < move; i++) {
+        while (move--) {
             temp_stack.push(hanoi[from].top());
             hanoi[from].pop();
         }
@@ -42,9 +43,7 @@ int main(int argc, char* argv[]) {
             temp_stack.pop();
         }
     }
-    for (const auto& s : hanoi) {
-        std::cout << s.top();
-    }
+    for (const auto& s : hanoi) std::cout << s.top();
     std::cout << std::endl;
     return 0;
 }
