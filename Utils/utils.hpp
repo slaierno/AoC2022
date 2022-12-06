@@ -49,6 +49,16 @@ auto split(std::string to_split, const char delimiter, L l = idem_return) {
 }
 
 template <typename L = decltype(idem_return)>
+auto get_input(const std::string& filename, L l = idem_return) {
+    if (std::ifstream input_file(filename); input_file.is_open()) {
+        std::stringstream buffer;
+        buffer << input_file.rdbuf();
+        return l(buffer.str());
+    } else
+        throw "Invalid input\n";
+};
+
+template <typename L = decltype(idem_return)>
 auto get_input(const std::string& filename,
                const std::initializer_list<std::string>& delimiters,
                L l = idem_return) {
