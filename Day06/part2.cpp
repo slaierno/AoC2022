@@ -24,9 +24,11 @@ int main(int argc, char* argv[]) {
                 marker_detector.erase(marker_detector.begin(), f + 1);
             } else if (marker_detector.size() == marker_size - 1) {
                 std::cout << i + 1 << std::endl;
-                break;
+                return 0;
             }
         }
         marker_detector.push_back(c);
     }
+    std::cout << "ERROR: no marker found!" << std::endl;
+    return -1;
 }
