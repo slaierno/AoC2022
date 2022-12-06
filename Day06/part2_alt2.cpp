@@ -33,7 +33,7 @@ int main(int argc, char* argv[]) {
 
     SetCount count_map(input.begin(), input.begin() + marker_size - 1);
 
-    for (size_t i = 0; i < input.size() - marker_size; i++) {
+    for (size_t i = 0; i < input.size() - marker_size + 1; i++) {
         count_map.insert(input[i + marker_size - 1]);
         if (count_map.size() == marker_size) {
             std::cout << i + marker_size << std::endl;
