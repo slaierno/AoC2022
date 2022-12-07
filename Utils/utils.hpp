@@ -51,13 +51,11 @@ auto split(std::string to_split, const char delimiter, L l = idem_return) {
     return AoC::split(to_split, std::string(1, delimiter), l);
 }
 
-template <typename L = decltype(idem_return)>
-requires requires(L l) { l(); }
-auto get_input(const std::string& filename, L l = idem_return) {
+auto get_input(const std::string& filename) {
     if (std::ifstream input_file(filename); input_file.is_open()) {
         std::stringstream buffer;
         buffer << input_file.rdbuf();
-        return l(buffer.str());
+        return buffer.str();
     } else
         throw "Invalid input\n";
 };
