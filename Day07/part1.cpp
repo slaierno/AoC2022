@@ -25,9 +25,9 @@ struct Folder {
     size_t get_size() {
         if (!size_setted) {
             size_setted = true;
-            size += accumulate(files | views::values, 0ULL);
             size += accumulate(
-                folders | views::values, 0ULL,
+                folders | views::values,
+                accumulate(files | views::values, 0ULL),
                 [](auto s, const auto f_ptr) { return s + f_ptr->get_size(); });
         }
         return size;
