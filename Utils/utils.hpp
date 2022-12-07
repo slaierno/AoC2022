@@ -5,6 +5,9 @@
 #include <vector>
 
 namespace AoC {
+template <class T>
+concept StringLike = std::is_convertible_v<T, std::string_view>;
+
 constexpr auto profile = [](const auto& block,
                             const std::string_view message = "") {
     std::cout << message << std::endl;
@@ -49,6 +52,7 @@ auto split(std::string to_split, const char delimiter, L l = idem_return) {
 }
 
 template <typename L = decltype(idem_return)>
+requires requires(L l) { l(); }
 auto get_input(const std::string& filename, L l = idem_return) {
     if (std::ifstream input_file(filename); input_file.is_open()) {
         std::stringstream buffer;
