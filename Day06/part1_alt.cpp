@@ -2,21 +2,14 @@
 #include <fstream>
 #include <iostream>
 #include <range/v3/all.hpp>
-#include <set>
 
 #include "utils.hpp"
 
 using namespace ranges;
 
-bool is_unique_c26(const ranges::input_range auto& window) {
-    std::array<char, 26> cs{};
-    return window.end() ==
-           find_if(window, [&cs](auto c) { return ++cs[c - 'a'] > 1; });
-}
 bool is_unique(const ranges::input_range auto& window) {
-    std::set<char> cs{};
-    return window.end() ==
-           find_if(window, [&cs](auto c) { return !cs.insert(c).second; });
+    std::array<char, 8 * sizeof(char)> cs{};
+    return none_of(window, [&cs](auto c) { return ++cs[c] > 1; });
 }
 
 // 3986
@@ -28,7 +21,7 @@ int main(int argc, char* argv[]) {
     const auto input = AoC::get_input(argv[1]);
     for (const auto& [i, window] :
          input | views::sliding(marker_size) | views::enumerate) {
-        if (is_unique_c26(window)) {
+        if (is_unique(window)) {
             std::cout << i + marker_size << std::endl;
             return 0;
         }

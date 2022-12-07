@@ -1,15 +1,15 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <range/v3/all.hpp>
+#include <unordered_map>
 
 #include "utils.hpp"
 
 using namespace ranges;
 
 class SetCount {
-    std::map<char, unsigned> m_countmap;
+    std::unordered_map<char, unsigned> m_countmap;
 
    public:
     SetCount(const auto& it_begin, const auto& it_end) {
