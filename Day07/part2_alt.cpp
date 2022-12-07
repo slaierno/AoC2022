@@ -3,6 +3,8 @@
 #include <functional>
 #include <iostream>
 #include <map>
+#include <memory>
+#include <optional>
 #include <range/v3/all.hpp>
 #include <set>
 #include <string_view>
@@ -15,10 +17,9 @@ class Folder {
     const std::string name;
     Folder* const parent;
     std::map<std::string, size_t> files;
-    std::map<std::string, std::shared_ptr<Folder>, std::less<>> folders;
+    std::map<std::string, std::unique_ptr<Folder>, std::less<>> folders;
     size_t size{0};
-    size_t total_size{0};
-    bool total_size_setted{false};
+    std::optional<size_t> total_size;
 
    public:
     Folder(auto name, auto parent) : name(name), parent(parent) {}
@@ -29,7 +30,8 @@ class Folder {
         }
     }
     void add_folder(const std::string& dirname) {
-        folders.insert({dirname, std::make_shared<Folder>(dirname, this)});
+        if (dirname != "/" && dirname != "..")
+            folders.insert({dirname, std::make_unique<Folder>(dirname, this)});
     }
     auto get_parent() const { return parent; }
     auto get_folder(std::string_view dirname) const {
@@ -37,13 +39,13 @@ class Folder {
     }
     auto folder_view() { return folders | views::values; }
     size_t get_total_size() {
-        if (!total_size_setted) {
-            total_size_setted = true;
-            total_size = accumulate(
-                folder_view(), size,
-                [](auto s, auto f_ptr) { return s + f_ptr->get_total_size(); });
+        if (!total_size) {
+            total_size =
+                accumulate(folder_view(), size, [](auto s, auto& f_ptr) {
+                    return s + f_ptr->get_total_size();
+                });
         }
-        return total_size;
+        return total_size.value();
     }
     auto get_name() { return name; }
 };
@@ -65,7 +67,7 @@ struct FileSystem {
     }
     void mkdir(const std::string& dir) { cwd->add_folder(dir); }
     void mkcd(const std::string& dir) {
-        if (dir != "/" && dir != "..") mkdir(dir);
+        mkdir(dir);
         cd(dir);
     }
     void touch(size_t size, const std::string& name) {
@@ -88,7 +90,7 @@ struct FileSystem {
 
    private:
     void rfind_internal(auto& rfind_result, const auto& filter) {
-        for (auto subf : cwd->folder_view()) {
+        for (auto& subf : cwd->folder_view()) {
             cd(subf.get());
             rfind_internal(rfind_result, filter);
             cdup();
