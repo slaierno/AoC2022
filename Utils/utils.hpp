@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -11,6 +12,20 @@ template <typename T>
 constexpr int signum(T val) {
     return (T(0) < val) - (val < T(0));
 }
+
+struct Point {
+    int x;
+    int y;
+
+    auto operator+=(auto oth) {
+        x += oth.x;
+        y += oth.y;
+    }
+    Point operator-(const auto& rhs) const { return {x - rhs.x, y - rhs.y}; }
+    auto operator<=>(const Point&) const = default;
+    int sup_norm() const { return std::max(std::abs(x), std::abs(y)); }
+    Point unit_vec() { return {signum(x), signum(y)}; }
+};
 
 template <class T>
 concept StringLike = std::is_convertible_v<T, std::string_view>;

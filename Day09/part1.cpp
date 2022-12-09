@@ -1,5 +1,4 @@
 #include <cassert>
-#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <range/v3/all.hpp>
@@ -8,42 +7,20 @@
 
 #include "utils.hpp"
 
-struct Point {
-    int x;
-    int y;
-
-    auto operator+=(auto oth) {
-        x += oth.x;
-        y += oth.y;
-    }
-    Point operator-(const auto& rhs) const { return {x - rhs.x, y - rhs.y}; }
-    auto operator<=>(const Point&) const = default;
-    int sup_norm() const { return std::max(std::abs(x), std::abs(y)); }
-    static Point unit_vec(const auto& p) {
-        return {AoC::signum(p.x), AoC::signum(p.y)};
-    }
-};
-
 struct Instruction {
-    Point direction;
+    AoC::Point direction;
     unsigned steps;
 
     Instruction(const std::string& str)
         : direction(dir_to_point(str[0])), steps(std::stoull(str.substr(2))) {}
 
-    static Point dir_to_point(char c) {
-        switch (c) {
-            case 'U':
-                return {0, 1};
-            case 'D':
-                return {0, -1};
-            case 'L':
-                return {-1, 0};
-            case 'R':
-                return {1, 0};
-            default:
-                throw;
-        }
+    static AoC::Point dir_to_point(char c) {
+        return {(c == 'R')   ? 1
+                : (c == 'L') ? -1
+                             : 0,
+                (c == 'U')   ? 1
+                : (c == 'D') ? -1
+                             : 0};
     }
 };
 
@@ -57,18 +34,20 @@ int main(int argc, char* argv[]) {
     const auto input = AoC::get_input(
         argv[1], '\n', [](const auto& v) { return Instruction(v); });
 
-    Point H{0, 0};
-    Point T{0, 0};
-    std::set<Point> tail_cover_map{T};
-    for (const auto& [d, s] : input) {
-        for (int steps = s; steps--;) {
-            H += d;
-            if (auto diff = H - T; diff.sup_norm() > 1) {
-                T += Point::unit_vec(diff);
-                tail_cover_map.insert(T);
+    AoC::Point head{0, 0};
+    AoC::Point tail{0, 0};
+    std::set<AoC::Point> tail_cover_map{tail};
+
+    for (const auto& [dir, n_of_steps] : input) {
+        for (int steps = n_of_steps; steps--;) {
+            head += dir;
+            if (auto diff = head - tail; diff.sup_norm() > 1) {
+                tail += diff.unit_vec();
+                tail_cover_map.insert(tail);
             }
         }
     }
+
     std::cout << tail_cover_map.size() << std::endl;
     return 0;
 }

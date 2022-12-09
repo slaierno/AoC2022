@@ -1,51 +1,27 @@
 #include <array>
 #include <cassert>
-#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <range/v3/all.hpp>
-// #include <ranges>
 #include <set>
 #include <string>
 
 #include "utils.hpp"
 
-struct Point {
-    int x;
-    int y;
-
-    void operator+=(auto oth) {
-        x += oth.x;
-        y += oth.y;
-    }
-    Point operator-(const auto& rhs) const { return {x - rhs.x, y - rhs.y}; }
-    auto operator<=>(const Point&) const = default;
-    int sup_norm() const { return std::max(std::abs(x), std::abs(y)); }
-    static Point unit_vec(const auto& p) {
-        return {AoC::signum(p.x), AoC::signum(p.y)};
-    }
-};
-
 struct Instruction {
-    Point direction;
+    AoC::Point direction;
     unsigned steps;
 
     Instruction(const std::string& str)
         : direction(dir_to_point(str[0])), steps(std::stoull(str.substr(2))) {}
 
-    static Point dir_to_point(char c) {
-        switch (c) {
-            case 'U':
-                return {0, 1};
-            case 'D':
-                return {0, -1};
-            case 'L':
-                return {-1, 0};
-            case 'R':
-                return {1, 0};
-            default:
-                throw;
-        }
+    static AoC::Point dir_to_point(char c) {
+        return {(c == 'R')   ? 1
+                : (c == 'L') ? -1
+                             : 0,
+                (c == 'U')   ? 1
+                : (c == 'D') ? -1
+                             : 0};
     }
 };
 
@@ -59,23 +35,23 @@ int main(int argc, char* argv[]) {
     const auto input = AoC::get_input(
         argv[1], '\n', [](const auto& v) { return Instruction(v); });
 
-    std::array<Point, 10> knots{0, 0};
-    Point& H = knots.front();
-    Point& T = knots.back();
+    std::array<AoC::Point, 10> knots{0, 0};
+    AoC::Point& head = knots.front();
+    AoC::Point& tail = knots.back();
 
-    std::set<Point> tail_cover_map{T};
+    std::set<AoC::Point> tail_cover_map{tail};
 
-    for (const auto& [d, s] : input) {
-        for (int steps = s; steps--;) {
-            H += d;
+    for (const auto& [dir, n_of_steps] : input) {
+        for (int steps = n_of_steps; steps--;) {
+            head += dir;
             for (const auto& knot_pair :
                  views::all(knots) | views::sliding(2)) {
                 if (auto diff = knot_pair[0] - knot_pair[1];
                     diff.sup_norm() > 1) {
-                    knot_pair[1] += Point::unit_vec(diff);
+                    knot_pair[1] += diff.unit_vec();
                 }
             }
-            tail_cover_map.insert(T);
+            tail_cover_map.insert(tail);
         }
     }
 
