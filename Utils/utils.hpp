@@ -6,6 +6,12 @@
 #include <vector>
 
 namespace AoC {
+
+template <typename T>
+constexpr int signum(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
 template <class T>
 concept StringLike = std::is_convertible_v<T, std::string_view>;
 

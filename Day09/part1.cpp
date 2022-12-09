@@ -8,11 +8,6 @@
 
 #include "utils.hpp"
 
-template <typename T>
-int sgn(T val) {
-    return (T(0) < val) - (val < T(0));
-}
-
 struct Point {
     int x;
     int y;
@@ -24,7 +19,9 @@ struct Point {
     Point operator-(const auto& rhs) const { return {x - rhs.x, y - rhs.y}; }
     auto operator<=>(const Point&) const = default;
     int sup_norm() const { return std::max(std::abs(x), std::abs(y)); }
-    static Point unit_vec(const auto& p) { return {sgn(p.x), sgn(p.y)}; }
+    static Point unit_vec(const auto& p) {
+        return {AoC::signum(p.x), AoC::signum(p.y)};
+    }
 };
 
 struct Instruction {
