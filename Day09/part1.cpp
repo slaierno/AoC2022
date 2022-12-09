@@ -63,8 +63,8 @@ int main(int argc, char* argv[]) {
     Point H{0, 0};
     Point T{0, 0};
     std::set<Point> tail_cover_map{T};
-    for (auto [d, s] : input) {
-        while (s--) {
+    for (const auto& [d, s] : input) {
+        for (int steps = s; steps--;) {
             H += d;
             if (auto diff = H - T; diff.sup_norm() > 1) {
                 T += Point::unit_vec(diff);
