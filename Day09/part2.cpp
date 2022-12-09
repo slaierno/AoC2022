@@ -65,20 +65,23 @@ int main(int argc, char* argv[]) {
     std::array<Point, 10> knots{0, 0};
     Point& H = knots.front();
     Point& T = knots.back();
+
     std::set<Point> tail_cover_map{T};
-    for (auto [d, s] : input) {
-        while (s--) {
+
+    for (const auto& [d, s] : input) {
+        for (int steps = s; steps--;) {
             H += d;
             for (const auto& knot_pair :
                  views::all(knots) | views::sliding(2)) {
-                if (auto dist = knot_pair[0] - knot_pair[1];
-                    dist.sup_norm() > 1) {
-                    knot_pair[1] += Point::unit_vec(dist);
+                if (auto diff = knot_pair[0] - knot_pair[1];
+                    diff.sup_norm() > 1) {
+                    knot_pair[1] += Point::unit_vec(diff);
                 }
             }
             tail_cover_map.insert(T);
         }
     }
+
     std::cout << tail_cover_map.size() << std::endl;
     return 0;
 }
