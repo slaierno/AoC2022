@@ -17,7 +17,7 @@ struct Point {
     int x;
     int y;
 
-    auto operator+=(auto oth) {
+    void operator+=(const auto& oth) {
         x += oth.x;
         y += oth.y;
     }
