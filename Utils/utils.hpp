@@ -13,17 +13,20 @@ constexpr int signum(T val) {
     return (T(0) < val) - (val < T(0));
 }
 
+template <typename T = int>
 struct Point {
-    int x;
-    int y;
+    T x;
+    T y;
 
+    Point(auto x, auto y) : x(x), y(y) {}
+    Point() {}
     void operator+=(const auto& oth) {
         x += oth.x;
         y += oth.y;
     }
     Point operator-(const auto& rhs) const { return {x - rhs.x, y - rhs.y}; }
     auto operator<=>(const Point&) const = default;
-    int sup_norm() const { return std::max(std::abs(x), std::abs(y)); }
+    T sup_norm() const { return std::max(std::abs(x), std::abs(y)); }
     Point unit_vec() { return {signum(x), signum(y)}; }
 };
 
