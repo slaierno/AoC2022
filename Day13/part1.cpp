@@ -22,6 +22,10 @@ class IntOrList {
         else
             add_list(sv = sv.substr(1));
     }
+    IntOrList(const std::string& s) {
+        std::string_view sv(s);
+        *this = IntOrList(sv);
+    }
     void add_int(std::string_view& sv) {
         auto end_p = sv.find_first_not_of("0123456789");
         int i = 0;
@@ -74,12 +78,9 @@ int main(int argc, char* argv[]) {
 
     const auto input = AoC::get_input(argv[1], "\n\n");
     size_t cnt = 0;
-    for (size_t i = 0; i < input.size(); i++) {
-        const auto& pair = input[i];
-        auto sep = pair.find_first_of("\n");
-        auto sv1 = std::string_view(pair).substr(0, sep);
-        auto sv2 = std::string_view(pair).substr(sep + 1);
-        if (IntOrList(sv1) < IntOrList(sv2)) cnt += (i + 1);
+    for (const auto& [i, pair] : input | views::enumerate) {
+        const auto sv = AoC::split(pair, '\n');
+        cnt += (IntOrList(sv[0]) < IntOrList(sv[1])) ? (i + 1) : 0;
     }
     std::cout << cnt << std::endl;
     return 0;

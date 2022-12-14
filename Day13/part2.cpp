@@ -24,6 +24,10 @@ class IntOrList {
         else
             add_list(sv = sv.substr(1));
     }
+    IntOrList(const std::string& s) {
+        std::string_view sv(s);
+        *this = IntOrList(sv);
+    }
     void add_int(std::string_view& sv) {
         auto end_p = sv.find_first_not_of("0123456789");
         int i = 0;
@@ -67,9 +71,6 @@ class IntOrList {
         iol.m_data = List{std::make_shared<IntOrList>(val)};
         return iol;
     }
-    static IntOrList get_sep(int val) {
-        return get_single_list(get_single_list(val));
-    }
 };
 
 // 21922
@@ -78,18 +79,14 @@ int main(int argc, char* argv[]) {
     assert(argc == 2);
 
     std::vector<IntOrList> packet_list;
-    auto sep1 = IntOrList::get_sep(2);
-    auto sep2 = IntOrList::get_sep(6);
+    auto sep1 = IntOrList::get_single_list(IntOrList::get_single_list(2));
+    auto sep2 = IntOrList::get_single_list(IntOrList::get_single_list(6));
     packet_list.push_back(sep1);
     packet_list.push_back(sep2);
-    const auto input = AoC::get_input(argv[1], "\n\n");
-    for (const auto& pair : input) {
-        auto sep = pair.find_first_of("\n");
-        auto sv1 = std::string_view(pair).substr(0, sep);
-        auto sv2 = std::string_view(pair).substr(sep + 1);
-        packet_list.emplace_back(sv1);
-        packet_list.emplace_back(sv2);
-    }
+    for (const auto& pair : AoC::get_input(argv[1], "\n\n"))
+        for (const auto& s : AoC::split(pair, '\n'))
+            packet_list.emplace_back(s);
+
     std::sort(packet_list.begin(), packet_list.end());
     auto sep1_it = std::find(packet_list.begin(), packet_list.end(), sep1);
     auto sep2_it = std::find(packet_list.begin(), packet_list.end(), sep2);
