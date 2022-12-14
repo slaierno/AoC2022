@@ -51,10 +51,9 @@ int main(int argc, char* argv[]) {
                 space[sand] = Tile::Sand;
                 sand_cnt++;
                 break;
-            } else {
-                sand += *it;
-                reached_bottom = sand.y > bottom_line;
             }
+            sand += *it;
+            reached_bottom = sand.y > bottom_line;
         }
     }
     std::cout << sand_cnt << std::endl;

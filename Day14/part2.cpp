@@ -66,9 +66,8 @@ int main(int argc, char* argv[]) {
                 space[sand] = Tile::Sand;
                 sand_cnt++;
                 break;
-            } else {
-                sand += *it;
             }
+            sand += *it;
         }
     }
     std::cout << sand_cnt << std::endl;
