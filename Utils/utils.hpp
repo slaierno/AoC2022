@@ -18,6 +18,18 @@ struct Point {
     T x;
     T y;
 
+    Point(const std::string& sv) {
+        auto sep = sv.find_first_of(',');
+        if constexpr (std::same_as<T, int>) {
+            x = std::stol(sv.substr(0, sep));
+            y = std::stol(sv.substr(sep + 1));
+        } else if constexpr (std::same_as<T, unsigned>) {
+            x = std::stoul(sv.substr(0, sep));
+            y = std::stoul(sv.substr(sep + 1));
+        } else {
+            throw;
+        }
+    }
     Point(auto x, auto y) : x(x), y(y) {}
     Point() {}
     void operator+=(const auto& oth) {
@@ -25,10 +37,18 @@ struct Point {
         y += oth.y;
     }
     Point operator-(const auto& rhs) const { return {x - rhs.x, y - rhs.y}; }
+    Point operator+(const auto& rhs) const { return {x + rhs.x, y + rhs.y}; }
     auto operator<=>(const Point&) const = default;
     T sup_norm() const { return std::max(std::abs(x), std::abs(y)); }
     Point unit_vec() { return {signum(x), signum(y)}; }
+    friend std::ostream& operator<< <>(std::ostream& os, const Point<T>& p);
 };
+
+template <typename T>
+std::ostream& operator<<(std::ostream& os, const Point<T>& p) {
+    os << '(' << p.x << ',' << p.y << ')';
+    return os;
+}
 
 template <class T>
 concept StringLike = std::is_convertible_v<T, std::string_view>;
@@ -116,3 +136,10 @@ constexpr auto for_each_ret(const auto& b, const auto& e, const auto& l) {
     return ret;
 }
 }  // namespace AoC
+
+template <>
+struct std::hash<AoC::Point<int>> {
+    std::size_t operator()(AoC::Point<int> const& p) const noexcept {
+        return (std::size_t)(p.x) << 32 | ((std::size_t)(p.y) & 0xFFFFFFFF);
+    }
+};

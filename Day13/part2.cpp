@@ -73,7 +73,7 @@ class IntOrList {
 };
 
 // 21922
-int main(int argc, [[maybe_unused]] char* argv[]) {
+int main(int argc, char* argv[]) {
     // quick and dirty
     assert(argc == 2);
 
