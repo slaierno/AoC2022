@@ -21,10 +21,6 @@ int main(int argc, char* argv[]) {
     // quick and dirty
     assert(argc == 2);
 
-    const auto input = AoC::get_input(argv[1], "\n", [](auto v) {
-        return AoC::split(v, "->", [](auto p) { return AoC::Point(p); });
-    });
-
     class {
         std::unordered_map<AoC::Point<int>, Tile> m_space;
         int m_bottom_line;
@@ -37,10 +33,14 @@ int main(int argc, char* argv[]) {
         }
     } space;
 
+    const auto input = AoC::get_input(argv[1], "\n", [](auto v) {
+        return AoC::split(v, "->", [](auto p) { return AoC::Point(p); });
+    });
+
     int bottom_line = 0;
 
-    for (auto lines : input) {
-        for (auto pair : lines | views::sliding(2)) {
+    for (const auto& lines : input) {
+        for (const auto& pair : lines | views::sliding(2)) {
             bottom_line = std::max({bottom_line, pair[0].y, pair[1].y});
             const auto sn = (pair[1] - pair[0]).unit_vec();
             for (auto sp = pair[0]; sp != (pair[1] + sn); sp += sn) {
