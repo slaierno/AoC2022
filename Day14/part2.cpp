@@ -59,18 +59,15 @@ int main(int argc, char* argv[]) {
 
     while (space[sand_start] != Tile::Sand) {
         for (auto sand = sand_start;;) {
-            bool move = false;
-            for (auto fall : falling_list) {
-                if (space[sand + fall] == Tile::Air) {
-                    sand += fall;
-                    move = true;
-                    break;
-                }
-            }
-            if (!move) {
+            const auto it = find_if(falling_list, [&](const auto& f) {
+                return space[sand + f] == Tile::Air;
+            });
+            if (it == falling_list.end()) {
                 space[sand] = Tile::Sand;
                 sand_cnt++;
                 break;
+            } else {
+                sand += *it;
             }
         }
     }

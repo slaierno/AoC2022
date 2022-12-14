@@ -42,25 +42,18 @@ int main(int argc, char* argv[]) {
     const auto sand_start = AoC::Point<int>(500, 0);
     unsigned sand_cnt = 0;
 
-    bool reached_bottom = false;
-    while (!reached_bottom) {
-        for (auto sand = sand_start;;) {
-            bool move = false;
-            for (auto fall : falling_list) {
-                if (space[sand + fall] == Tile::Air) {
-                    sand += fall;
-                    move = true;
-                    break;
-                }
-            }
-            if (!move) {
+    for (bool reached_bottom = false; !reached_bottom;) {
+        for (auto sand = sand_start; !reached_bottom;) {
+            const auto it = find_if(falling_list, [&](const auto& f) {
+                return space[sand + f] == Tile::Air;
+            });
+            if (it == falling_list.end()) {
                 space[sand] = Tile::Sand;
                 sand_cnt++;
                 break;
-            }
-            if (sand.y > bottom_line) {
-                reached_bottom = true;
-                break;
+            } else {
+                sand += *it;
+                reached_bottom = sand.y > bottom_line;
             }
         }
     }
