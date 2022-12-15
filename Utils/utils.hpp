@@ -18,7 +18,7 @@ struct Point {
     T x;
     T y;
 
-    Point(const std::string& sv) {
+    constexpr Point(const std::string& sv) {
         auto sep = sv.find_first_of(',');
         if constexpr (std::same_as<T, int>) {
             x = std::stol(sv.substr(0, sep));
@@ -30,18 +30,26 @@ struct Point {
             throw;
         }
     }
-    Point(auto x, auto y) : x(x), y(y) {}
-    Point() {}
-    void operator+=(const auto& oth) {
+    constexpr Point(auto x, auto y) : x(x), y(y) {}
+    constexpr Point() {}
+    constexpr void operator+=(const auto& oth) {
         x += oth.x;
         y += oth.y;
     }
-    Point operator-(const auto& rhs) const { return {x - rhs.x, y - rhs.y}; }
-    Point operator+(const auto& rhs) const { return {x + rhs.x, y + rhs.y}; }
-    auto operator<=>(const Point&) const = default;
-    T sup_norm() const { return std::max(std::abs(x), std::abs(y)); }
-    Point unit_vec() { return {signum(x), signum(y)}; }
-    friend std::ostream& operator<< <>(std::ostream& os, const Point<T>& p);
+    constexpr Point operator-(const auto& rhs) const {
+        return {x - rhs.x, y - rhs.y};
+    }
+    constexpr Point operator+(const auto& rhs) const {
+        return {x + rhs.x, y + rhs.y};
+    }
+    constexpr auto operator<=>(const Point&) const = default;
+    constexpr T sup_norm() const { return std::max(std::abs(x), std::abs(y)); }
+    constexpr Point unit_vec() { return {signum(x), signum(y)}; }
+    constexpr static T taxi_dist(const Point& lhs, const Point& rhs) {
+        return std::abs(lhs.x - rhs.x) + std::abs(lhs.y - rhs.y);
+    }
+    constexpr friend std::ostream& operator<< <>(std::ostream& os,
+                                                 const Point<T>& p);
 };
 
 template <typename T>
