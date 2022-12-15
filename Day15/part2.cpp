@@ -36,8 +36,8 @@ int main(int argc, char* argv[]) {
         std::pair{sensor_list, beacon_list};
     });
 
-#pragma omp parallel for
-    for (int y = 0; y <= max_dist; y++) {
+    bool found = false;
+    for (int y = 0; y <= max_dist && !found; y++) {
         const auto cover_ranges = ({
             std::vector<std::pair<int, int>> cover_ranges;
             for (const auto& [s, d] : sensor_list)
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
             });
             cover_ranges;
         });
-        for (int x = 0; x < max_dist; x++) {
+        for (int x = 0; x < max_dist && !found; x++) {
             bool search = false;
             for (const auto& r : cover_ranges) {
                 if (x >= r.first && x <= r.second) {
@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
             }
             if (!search && !beacon_list.contains(Point(x, y))) {
                 std::cout << (int64_t)x * 4000000 + y << std::endl;
-                break;
+                found = true;
             }
         }
     }
