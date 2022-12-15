@@ -25,6 +25,7 @@ int main(int argc, char* argv[]) {
                            split[9].substr(2, split[9].size() - 2));
         return SensorBeacon{sensor, beacon};
     });
+
     const auto [sensor_list, beacon_list] = ({
         std::vector<std::pair<Point, int>> sensor_list;
         std::unordered_set<Point> beacon_list;
@@ -34,6 +35,7 @@ int main(int argc, char* argv[]) {
         }
         std::pair{sensor_list, beacon_list};
     });
+
 #pragma omp parallel for
     for (int y = 0; y <= max_dist; y++) {
         const auto cover_ranges = ({
