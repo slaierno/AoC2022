@@ -1,13 +1,11 @@
-#include <array>
 #include <cassert>
 #include <fstream>
 #include <iostream>
-#include <queue>
 #include <range/v3/all.hpp>
-#include <unordered_map>
 #include <unordered_set>
 
 #include "utils.hpp"
+
 using namespace ranges;
 using Point = AoC::Point<int>;
 using SensorBeacon = std::pair<Point, Point>;

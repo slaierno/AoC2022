@@ -1,19 +1,16 @@
-#include <array>
 #include <cassert>
 #include <fstream>
 #include <iostream>
-#include <queue>
 #include <range/v3/all.hpp>
-#include <unordered_map>
 #include <unordered_set>
 
 #include "utils.hpp"
+
 using namespace ranges;
 using Point = AoC::Point<int>;
 using SensorBeacon = std::pair<Point, Point>;
 
 constexpr Point RX{1, 0};
-constexpr Point LX{-1, 0};
 
 constexpr int target_y = 2000000;
 
@@ -42,18 +39,10 @@ int main(int argc, char* argv[]) {
     std::unordered_set<Point> empty_list;
     for (const auto& [s, d] : sensor_list) {
         const Point start = {s.x, target_y};
-        for (auto exploring = start; Point::taxi_dist(exploring, s) <= d;
-             exploring += LX) {
-            if (!beacon_list.contains(exploring)) {
-                empty_list.insert(exploring);
-            }
-        }
-        for (auto exploring = start + RX; Point::taxi_dist(exploring, s) <= d;
-             exploring += RX) {
-            if (!beacon_list.contains(exploring)) {
-                empty_list.insert(exploring);
-            }
-        }
+        auto ddiff = d - Point::taxi_dist(start, s);
+        for (auto exploring = start - Point{ddiff, 0};
+             exploring.x <= start.x + ddiff; exploring += RX)
+            if (!beacon_list.contains(exploring)) empty_list.insert(exploring);
     }
     std::cout << empty_list.size() << std::endl;
     return 0;
